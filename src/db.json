@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "karthika7",
+      "email": "kd@example.com",
+      "employeeId": "E001",
+      "mobile": "1234567890",
+      "jobRole": "Developer"
+    },
+    {
+      "id": "1727236312283",
+      "name": "suriya",
+      "email": "karthika12@gmail.com",
+      "employeeId": "12346",
+      "mobile": "1234567890",
+      "jobRole": "Designer"
+    },
+    {
+      "id": "1727238400585",
+      "name": "karthik",
+      "email": "karthik21@gmail.com",
+      "employeeId": "5643",
+      "mobile": "9843367429",
+      "jobRole": "Developer"
+    }
+  ]
+}
