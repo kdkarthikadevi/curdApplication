@@ -1,10 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteUser, setUsers } from '../features/userSlice';
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../index.css';
 
 const UserList = ({ setUserToEdit }) => {
+    const [showModal, setShowModal] = useState(false);
+    const [userIdToDelete, setUserIdToDelete] = useState(null);
     const users = useSelector((state) => state.users);
     const dispatch = useDispatch();
 
@@ -17,19 +22,33 @@ const UserList = ({ setUserToEdit }) => {
 
         fetchUsers();
     }, [dispatch]);
-    const handleDelete = async (userId) => {
-        try {
-            const response = await fetch(`http://localhost:3000/users/${userId}`, {
-                method: 'DELETE',
-            });
 
-            if (response.ok) {
-                dispatch(deleteUser(userId)); 
-            } else {
-                console.error('Failed to delete user:', response.status);
+    const handleClick = (userId) => {
+        setUserIdToDelete(userId);
+        setShowModal(true);
+    };
+    
+
+    const handleDelete = async () => {
+        if (userIdToDelete) {
+            try {
+                const response = await fetch(`http://localhost:3000/users/${userIdToDelete}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    dispatch(deleteUser(userIdToDelete));
+                    toast.success('User deleted successfully!');
+                } else {
+                    console.error('Failed to delete user:', response.status);
+                    toast.error('Failed to delete user.');
+                }
+            } catch (error) {
+                console.error("Error deleting user:", error);
+                toast.error('Error deleting user.'); 
+            } finally {
+                setShowModal(false); 
             }
-        } catch (error) {
-            console.error("Error deleting user:", error);
         }
     };
 
@@ -58,7 +77,7 @@ const UserList = ({ setUserToEdit }) => {
                                 <div onClick={() => setUserToEdit(user)}>
                                     <FaEdit style={{ color: 'black', fontSize: '20px' }} />
                                 </div>
-                                <div onClick={() => handleDelete(user.id)}>
+                                <div onClick={() => handleClick(user.id)}>
                                     <MdDeleteForever style={{ color: 'black', fontSize: '22px' }} />
                                 </div>
                             </td>
@@ -66,6 +85,20 @@ const UserList = ({ setUserToEdit }) => {
                     ))}
                 </tbody>
             </table>
+            
+            {/* Modal Delete */}
+            {showModal && (
+                <div className="modal" style={{ display: "block" }}>
+                    <div className="content">
+                        <h4>Confirm Deletion</h4>
+                        <p>Are you sure you want to delete this user?</p>
+                        <button className="btn btn-primary me-3" onClick={handleDelete}>Yes, delete</button>
+                        <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                    </div>
+                </div>
+            )}
+
+            <ToastContainer />
         </div>
     );
 };

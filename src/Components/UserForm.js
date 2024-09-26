@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addUser, updateUser } from '../features/userSlice';
 import employeeData from "../db.json";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UserForm = ({ userToEdit, setUserToEdit }) => {
     console.log(employeeData);
@@ -96,11 +98,14 @@ const UserForm = ({ userToEdit, setUserToEdit }) => {
                     updatedUser = await response.json();
                     if (userToEdit) {
                         dispatch(updateUser(updatedUser));
+                        toast.success('User updated successfully!');
+                        closeModal()
                     } else {
                         dispatch(addUser(updatedUser));
+                      //  toast.error('Failed to updated user.');
                     }
-                 
-                    setOpen(false);
+                    setOpen(false); 
+                   
                 }
             } else {
                 const response = await fetch('http://localhost:3000/users', {
@@ -114,15 +119,23 @@ const UserForm = ({ userToEdit, setUserToEdit }) => {
                 if (response.ok) {
                     updatedUser = await response.json();
                     dispatch(addUser(updatedUser)); 
+                    toast.success('User added successfully!');
+                }else{
+                    dispatch(addUser(updatedUser)); 
+                   // toast.error('Failed to added user.');
                 }
                
             }
         } catch (error) {
-            console.error("Error saving user:", error);
+            console.error("Error deleting user:", error);
+            toast.error('Error  user.'); 
         } finally {
             resetForm();
-            setOpen(false);
+            if (Object.keys(validationErrors).length === 0) {
+                setOpen(false);
+            } 
         }
+
     };
     
 
@@ -154,7 +167,7 @@ const UserForm = ({ userToEdit, setUserToEdit }) => {
                                             value={newUser.name}
                                             onChange={handleChange}
                                             placeholder="Name"
-                                            required
+                                            
                                         />
                                         {errors.name && <small className="text-danger">{errors.name}</small>}
                                     </div>
@@ -166,7 +179,7 @@ const UserForm = ({ userToEdit, setUserToEdit }) => {
                                             value={newUser.email}
                                             onChange={handleChange}
                                             placeholder="Email"
-                                            required
+                                            
                                         />
                                         {errors.email && <small className="text-danger">{errors.email}</small>}
                                     </div>
@@ -178,7 +191,7 @@ const UserForm = ({ userToEdit, setUserToEdit }) => {
                                             value={newUser.employeeId}
                                             onChange={handleChange}
                                             placeholder="Employee ID"
-                                            required
+                                            
                                         />
                                         {errors.employeeId && <small className="text-danger">{errors.employeeId}</small>}
                                     </div>
@@ -190,7 +203,7 @@ const UserForm = ({ userToEdit, setUserToEdit }) => {
                                             value={newUser.mobile}
                                             onChange={handleChange}
                                             placeholder="Mobile"
-                                            required
+                                           
                                         />
                                         {errors.mobile && <small className="text-danger">{errors.mobile}</small>}
                                     </div>
@@ -200,7 +213,7 @@ const UserForm = ({ userToEdit, setUserToEdit }) => {
                                             name="jobRole"
                                             value={newUser.jobRole}
                                             onChange={handleChange}
-                                            required
+                                            
                                         >
                                             <option value="">Select Job Role</option>
                                             <option value="Developer">Developer</option>
